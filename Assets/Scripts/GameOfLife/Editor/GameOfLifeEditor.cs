@@ -17,14 +17,14 @@ public class GameOfLifeEditor : Editor
 
         // Buttons
         GUILayout.BeginHorizontal();
-        EditorGUI.BeginDisabledGroup(gameOfLife.Paused);
+        EditorGUI.BeginDisabledGroup(!gameOfLife.Paused);
         if (GUILayout.Button("Resume"))
         {
             gameOfLife.Resume();
         }
         EditorGUI.EndDisabledGroup();
         GUILayout.Space(25);
-        EditorGUI.BeginDisabledGroup(!gameOfLife.Paused);
+        EditorGUI.BeginDisabledGroup(gameOfLife.Paused);
         if (GUILayout.Button("Pause"))
         {
             gameOfLife.Pause();

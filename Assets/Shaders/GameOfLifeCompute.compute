@@ -1,0 +1,27 @@
+﻿#pragma kernel GameOfLife
+
+Texture2D<float4> Input;
+RWTexture2D<float4> Result;
+
+uint2 Resolution;
+float3 LiveCellColor;
+float3 DeadCellColor;
+
+[numthreads(8,8,1)]
+void GameOfLife (uint3 id : SV_DispatchThreadID)
+{
+    int count = 0;
+    count += id.x + 1 < Resolution.x && Input[uint2(id.x + 1, id.y)].a > 0.5f;
+    count += id.x - 1 >= 0 && Input[uint2(id.x - 1, id.y)].a > 0.5f;
+    count += id.y + 1 < Resolution.y && Input[uint2(id.x, id.y + 1)].a > 0.5f;
+    count += id.y - 1 >= 0 && Input[uint2(id.x, id.y - 1)].a > 0.5f;
+    count += id.x + 1 < Resolution.x && id.y + 1 < Resolution.y && Input[uint2(id.x + 1, id.y + 1)].a > 0.5f;
+    count += id.x - 1 >= 0 && id.y + 1 < Resolution.y && Input[uint2(id.x - 1, id.y + 1)].a > 0.5f;
+    count += id.x + 1 < Resolution.x && id.y - 1 >= 0 && Input[uint2(id.x + 1, id.y - 1)].a > 0.5f;
+    count += id.x - 1 >= 0 && id.y - 1 >= 0 && Input[uint2(id.x - 1, id.y - 1)].a > 0.5f;
+    
+    bool isAlive = Input[id.xy].a > 0.5f;
+    int live = (isAlive && (count == 2 || count == 3)) || !isAlive && count == 3;
+    float3 color = live * LiveCellColor + (1 - live) * DeadCellColor;
+    Result[id.xy] = float4(color.x, color.y, color.z, live);
+}
