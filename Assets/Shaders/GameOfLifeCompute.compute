@@ -23,5 +23,6 @@ void GameOfLife (uint3 id : SV_DispatchThreadID)
     bool isAlive = Input[id.xy].a > 0.5f;
     int live = (isAlive && (count == 2 || count == 3)) || !isAlive && count == 3;
     float3 color = live * LiveCellColor + (1 - live) * DeadCellColor;
-    Result[id.xy] = float4(color.x, color.y, color.z, live);
+    //Result[id.xy] = float4(color.x && count == 3, color.y, color.z  && count == 2, live);
+    Result[id.xy] = float4(color.x && count == 3, color.y && count == 2, 0.0f, live);
 }

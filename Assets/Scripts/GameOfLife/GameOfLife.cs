@@ -23,6 +23,15 @@ public class GameOfLife : MonoBehaviour
     private int InputTexCS, ResultTexCS;
     private int ResolutionCS, LiveCellCS, DeadCellCS;
 
+    // Init States
+    public enum Init
+    {
+        Random,
+        ScriptableObject
+    }
+    public Init InitMode = Init.Random;
+    [HideInInspector] public Texture2D InitialState;
+
     private IEnumerator UpdateCor()
     {
         WaitForSecondsRealtime waitForSeconds = new WaitForSecondsRealtime(TickTime);
@@ -74,32 +83,60 @@ public class GameOfLife : MonoBehaviour
         Paused = false;
     }
 
-    private void InitValues()
+    public Texture2D GetCurrentState()
     {
-        // Init Colors
-        Color32[] Colors = new Color32[Resolution.x * Resolution.y];
-        for (int y = 0; y < Resolution.y - 2; y++)
-        {
-            for (int x = 0; x < Resolution.x - 2; x++)
-            {
-                byte c = ((x % 3 < 2) && (y % 3 < 2)) ? (byte)255 : (byte)0;
-                Colors[y * Resolution.x + x] = new Color32(c, c, c, c);
-            }
-        }
-        Vector2Int middlePoint = new Vector2Int(Resolution.x / 2, (Resolution.y / 2));
-        // Colors[middlePoint.y * Resolution.x + middlePoint.x] = new Color32(0, 0, 0, 0);
-        Colors[(middlePoint.y + 1) * Resolution.x + middlePoint.x] = new Color32(0, 0, 0, 0);
-        // Colors[(middlePoint.y - 1) * Resolution.x + middlePoint.x] = new Color32(255, 255, 255, 255);
-        // Colors[middlePoint.y * Resolution.x + middlePoint.x + 1] = new Color32(255, 255, 255, 255);
-        // Colors[middlePoint.y * Resolution.x + middlePoint.x - 1] = new Color32(255, 255, 255, 255);
-
-        // Initial Texture
-        Texture2D initTexture = new Texture2D(Resolution.x, Resolution.y, TextureFormat.RGBA32, false, false)
+        Texture2D saveTexture = new Texture2D(Resolution.x, Resolution.y, TextureFormat.RGBA32, false, false)
         {
             filterMode = FilterMode.Point
         };
-        initTexture.SetPixels32(Colors);
-        initTexture.Apply();
+        RenderTexture.active = IsTextureA ? TextureA : TextureB;
+        saveTexture.ReadPixels(new Rect(0, 0, Resolution.x, Resolution.y), 0, 0, false);
+        saveTexture.Apply();
+        return saveTexture;
+    }
+
+    private void InitValues()
+    {
+        Texture2D initTexture;
+        if (InitMode == Init.Random)
+        {
+            // Init Colors
+            Color32[] colors = new Color32[Resolution.x * Resolution.y];
+            for (int y = 0; y < Resolution.y - 2; y++)
+            {
+                for (int x = 0; x < Resolution.x - 2; x++)
+                {
+                    byte c = ((x % 3 < 2) && (y % 3 < 2)) ? (byte)255 : (byte)0;
+                    colors[y * Resolution.x + x] = new Color32(c, c, c, c);
+                }
+            }
+            Vector2Int middlePoint = new Vector2Int(Resolution.x / 2, (Resolution.y / 2));
+            // colors[middlePoint.y * Resolution.x + middlePoint.x] = new Color32(0, 0, 0, 0);
+            colors[(middlePoint.y + 1) * Resolution.x + middlePoint.x] = new Color32(0, 0, 0, 0);
+            // colors[(middlePoint.y - 1) * Resolution.x + middlePoint.x] = new Color32(255, 255, 255, 255);
+            // colors[middlePoint.y * Resolution.x + middlePoint.x + 1] = new Color32(255, 255, 255, 255);
+            // colors[middlePoint.y * Resolution.x + middlePoint.x - 1] = new Color32(255, 255, 255, 255);
+
+            // Initial Texture
+            initTexture = new Texture2D(Resolution.x, Resolution.y, TextureFormat.RGBA32, false, false)
+            {
+                filterMode = FilterMode.Point
+            };
+            initTexture.SetPixels32(colors);
+            initTexture.Apply();
+        }
+        else if (InitMode == Init.ScriptableObject)
+        {
+            initTexture = InitialState;
+            Resolution.x = InitialState.width;
+            Resolution.y = InitialState.height;
+        }
+        else
+        {
+            initTexture = null;
+        }
+
+
         // Texture2D to RenderTexture
         IsTextureA = true;
         Graphics.Blit(initTexture, TextureA);
