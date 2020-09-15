@@ -74,4 +74,8 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Count2Color: {r: 0.31639373, g: 0.5437155, b: 0.8490566, a: 1}
+    - _Count3AliveColor: {r: 0.6631624, g: 0.24296904, b: 0.7924528, a: 1}
+    - _Count3DeadColor: {r: 0, g: 0, b: 0, a: 0}
+    - _DeadColor: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}

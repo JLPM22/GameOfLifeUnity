@@ -3,6 +3,10 @@
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        _Count2Color ("Count 2 Color", COLOR) = (1,1,1,1)
+        _Count3AliveColor ("Count 3 Alive Color", COLOR) = (1,1,1,1)
+        _Count3DeadColor ("Count 3 Dead Color", COLOR) = (0,0,0,0)
+        _DeadColor("Dead Color", COLOR) = (0,0,0,0)
     }
     SubShader
     {
@@ -29,8 +33,8 @@
                 float4 vertex : SV_POSITION;
             };
 
-            sampler2D _MainTex;
-            float4 _MainTex_ST;
+            uniform sampler2D _MainTex;
+            uniform float4 _MainTex_ST;
 
             v2f vert (appdata v)
             {
@@ -40,10 +44,18 @@
                 return o;
             }
 
+            uniform fixed4 _Count2Color;
+            uniform fixed4 _Count3AliveColor;
+            uniform fixed4 _Count3DeadColor;
+            uniform fixed4 _DeadColor;
+
             fixed4 frag (v2f i) : SV_Target
             {
                 fixed4 col = tex2D(_MainTex, i.uv);
-                return col;
+                fixed4 aliveColor = _Count2Color * col.r +
+                                    _Count3AliveColor * col.g +
+                                    _Count3DeadColor * col.b;
+                return aliveColor * col.a + _DeadColor * (1 - col.a);
             }
             ENDCG
         }

@@ -4,8 +4,6 @@ Texture2D<float4> Input;
 RWTexture2D<float4> Result;
 
 uint2 Resolution;
-float3 LiveCellColor;
-float3 DeadCellColor;
 
 [numthreads(8,8,1)]
 void GameOfLife (uint3 id : SV_DispatchThreadID)
@@ -22,7 +20,7 @@ void GameOfLife (uint3 id : SV_DispatchThreadID)
     
     bool isAlive = Input[id.xy].a > 0.5f;
     int live = (isAlive && (count == 2 || count == 3)) || !isAlive && count == 3;
-    float3 color = live * LiveCellColor + (1 - live) * DeadCellColor;
-    //Result[id.xy] = float4(color.x && count == 3, color.y, color.z  && count == 2, live);
-    Result[id.xy] = float4(color.x && count == 3, color.y && count == 2, 0.0f, live);
+    // R = 1 if count == 2 / G = 1 if count == 3 and isAlive / B = 1 if count == 3 and !isAlive / A = 1 if alive
+    // Color is finally applied in a shader to separate logic from actual coloring
+    Result[id.xy] = float4(count == 2, isAlive && count == 3, !isAlive && count == 3, live); 
 }

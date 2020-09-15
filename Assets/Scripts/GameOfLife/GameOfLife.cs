@@ -21,7 +21,7 @@ public class GameOfLife : MonoBehaviour
     // Compute Shader
     private int KernelCS;
     private int InputTexCS, ResultTexCS;
-    private int ResolutionCS, LiveCellCS, DeadCellCS;
+    private int ResolutionCS;
 
     // Init States
     public enum Init
@@ -147,8 +147,6 @@ public class GameOfLife : MonoBehaviour
         InputTexCS = Shader.PropertyToID("Input");
         ResultTexCS = Shader.PropertyToID("Result");
         ResolutionCS = Shader.PropertyToID("Resolution");
-        LiveCellCS = Shader.PropertyToID("LiveCellColor");
-        DeadCellCS = Shader.PropertyToID("DeadCellColor");
     }
 
     private void UpdateState()
@@ -160,8 +158,6 @@ public class GameOfLife : MonoBehaviour
         ComputeShader.SetTexture(KernelCS, ResultTexCS, rwTexture);
 
         ComputeShader.SetInts(ResolutionCS, Resolution.x, Resolution.y);
-        ComputeShader.SetFloats(LiveCellCS, 1.0f, 1.0f, 1.0f);
-        ComputeShader.SetFloats(DeadCellCS, 0.0f, 0.0f, 0.0f);
 
         ComputeShader.Dispatch(KernelCS, Resolution.x / 8, Resolution.y / 8, 1);
 
