@@ -55,7 +55,9 @@
                 fixed4 aliveColor = _Count2Color * col.r +
                                     _Count3AliveColor * col.g +
                                     _Count3DeadColor * col.b;
-                return aliveColor * col.a + _DeadColor * (1 - col.a);
+                fixed4 finalColor = aliveColor * col.a + _DeadColor * (1 - col.a);
+                finalColor.a = 1;
+                return finalColor;
             }
             ENDCG
         }

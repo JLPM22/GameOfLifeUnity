@@ -112,7 +112,7 @@ public class GameOfLife : MonoBehaviour
             }
             Vector2Int middlePoint = new Vector2Int(Resolution.x / 2, (Resolution.y / 2));
             // colors[middlePoint.y * Resolution.x + middlePoint.x] = new Color32(0, 0, 0, 0);
-            colors[(middlePoint.y + 1) * Resolution.x + middlePoint.x] = new Color32(0, 0, 0, 0);
+            colors[(middlePoint.y + 1) * Resolution.x + middlePoint.x + 1] = new Color32(0, 0, 0, 0);
             // colors[(middlePoint.y - 1) * Resolution.x + middlePoint.x] = new Color32(255, 255, 255, 255);
             // colors[middlePoint.y * Resolution.x + middlePoint.x + 1] = new Color32(255, 255, 255, 255);
             // colors[middlePoint.y * Resolution.x + middlePoint.x - 1] = new Color32(255, 255, 255, 255);
